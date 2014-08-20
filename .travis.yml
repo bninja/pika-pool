@@ -1,0 +1,18 @@
+language: python
+python:
+  - 2.7
+install:
+  - pip install -e .[tests]
+  - pip install coveralls
+script:
+  - py.test test.py --cov=pika_pool --cov-report term-missing
+after_success:
+  - coveralls
+deploy:
+  provider: pypi
+  user: somepie
+  password:
+    secure: f01cUCmCqzNyQ2cQcY5sNQPKXlBgESqp7LMohTfZxyugGxdyGV2YgHLH/BJc31JH4Fnq7WBa7Kjo94c2BofY2jTkQMqdMBXXKLbdg5Rwn4imlvFzv1VYJB8Cwl7aTCIIHn5UldKTnJPzt47rn9DI17iPbqCIdOZ5nKt/fO6ltC0=
+  on:
+    all_branches: true
+    tags: true
