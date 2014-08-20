@@ -40,6 +40,7 @@ def consume(request, params):
 
     cxn = pika.BlockingConnection(params)
     channel = cxn.channel()
+    channel.queue_declare(queue='pika_pool_test')
     channel.basic_consume(_callback, queue='pika_pool_test', no_ack=True)
 
     threading.Thread(target=_forever).start()
