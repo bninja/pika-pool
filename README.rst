@@ -4,9 +4,9 @@ pika-pool
 
 .. image:: https://travis-ci.org/bninja/pika-pool.png
    :target: https://travis-ci.org/bninja/pika-pool
-
-.. image:: https://coveralls.io/repos/bninja/pika-pool/badge.png
-   :target: https://coveralls.io/r/bninja/pika-pool
+   
+.. image:: https://coveralls.io/repos/bninja/pika-pool/badge.png?branch=master
+   :target: https://coveralls.io/r/bninja/pika-pool?branch=master
 
 Pika connection pooling inspired by:
 
