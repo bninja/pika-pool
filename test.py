@@ -29,7 +29,7 @@ consumed = {
 
 
 @pytest.fixture(scope='session', autouse=True)
-def consume(request, params):
+def consume(params):
 
     def _callback(ch, method, properties, body):
         msg = Message.from_json(body)
@@ -43,9 +43,9 @@ def consume(request, params):
     channel.queue_declare(queue='pika_pool_test')
     channel.basic_consume(_callback, queue='pika_pool_test', no_ack=True)
 
-    threading.Thread(target=_forever).start()
-
-    request.addfinalizer(lambda: channel.stop_consuming())
+    thd = threading.Thread(target=_forever)
+    thd.daemon = True
+    thd.start()
 
 
 @pytest.fixture
