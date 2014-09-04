@@ -13,7 +13,7 @@ Pika connection pooling inspired by:
 - `flask-pika <https://github.com/WeatherDecisionTechnologies/flask-pika>`_
 - `sqlalchemy.pool.Pool <http://docs.sqlalchemy.org/en/latest/core/pooling.html#sqlalchemy.pool.Pool>`_
 
-Typically you'll go with local shovel(s), krazy kombu, etc. but this might work too.
+Typically you'll go with local shovel(s), `krazee-eyez kombu <http://bit.ly/1txcnnO>`_, etc. but this works too.
 
 Get it:
 
