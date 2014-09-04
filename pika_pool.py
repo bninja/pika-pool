@@ -49,6 +49,7 @@ Use it like e.g. this:
 """
 from __future__ import unicode_literals
 
+from datetime import datetime
 import logging
 import Queue as queue
 import select
@@ -213,15 +214,21 @@ class Pool(object):
             if self.channel:
                 try:
                     self.channel.close()
-                    self.channel = None
                 except Connection.connectivity_errors as ex:
                     if not Connection.is_connection_invalidated(ex):
                         raise
+                self.channel = None
             try:
                 self.cxn.close()
             except Connection.connectivity_errors as ex:
                 if not Connection.is_connection_invalidated(ex):
                     raise
+
+        def __str__(self):
+            return ', '.join('{0}={1}'.format(k, v) for k, v in [
+                ('cxn', '{0}:{1}/{2}'.format(self.cxn.params.host, self.cxn.params.port, self.cxn.params.virtual_host)),
+                ('channel', '{0}'.format(int(self.channel) if self.channel is not None else self.channel)),
+            ])
 
     def _create(self):
         """
@@ -300,11 +307,11 @@ class QueuedPool(Pool):
                     except Overflow:
                         raise Timeout()
         if self.is_expired(fairy):
-            logger.info('connection %r expired', fairy)
+            logger.info('closing expired connection - %s', fairy)
             self.close(fairy)
             return self.acquire(timeout=timeout)
         if self.is_stale(fairy):
-            logger.info('connection %r stale', fairy)
+            logger.info('closing stale connection - %s', fairy)
             self.close(fairy)
             return self.acquire(timeout=timeout)
         return self.Connection(self, fairy)
@@ -341,6 +348,14 @@ class QueuedPool(Pool):
         def __init__(self, cxn):
             super(QueuedPool.Fairy, self).__init__(cxn)
             self.released_at = self.created_at = time.time()
+
+        def __str__(self):
+            return ', '.join('{0}={1}'.format(k, v) for k, v in [
+                ('cxn', '{0}:{1}/{2}'.format(self.cxn.params.host, self.cxn.params.port, self.cxn.params.virtual_host)),
+                ('channel', '{0}'.format(int(self.channel) if self.channel is not None else self.channel)),
+                ('created_at', '{0}'.format(datetime.fromtimestamp(self.created_at).isoformat())),
+                ('released_at', '{0}'.format(datetime.fromtimestamp(self.released_at).isoformat())),
+            ])
 
     def is_stale(self, fairy):
         if not self.stale:
