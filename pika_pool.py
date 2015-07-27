@@ -51,7 +51,14 @@ from __future__ import unicode_literals
 
 from datetime import datetime
 import logging
-import Queue as queue
+
+try:
+    # python 3
+    import queue
+except ImportError:
+    # python 2
+    import Queue as queue
+
 import select
 import socket
 import threading
@@ -60,7 +67,7 @@ import time
 import pika.exceptions
 
 
-__version__ = '0.1.1'
+__version__ = '0.1.2'
 
 __all__ = [
     'Error'
