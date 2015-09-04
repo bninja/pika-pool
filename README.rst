@@ -13,7 +13,7 @@ Pika connection pooling inspired by:
 - `flask-pika <https://github.com/WeatherDecisionTechnologies/flask-pika>`_
 - `sqlalchemy.pool.Pool <http://docs.sqlalchemy.org/en/latest/core/pooling.html#sqlalchemy.pool.Pool>`_
 
-Typically you'll go with local shovel(s), `krazee-eyez kombu <http://bit.ly/1txcnnO>`_, etc. but this works too.
+Typically you'll go with local `shovels <https://www.rabbitmq.com/shovel.html>`_, `krazee-eyez kombu <http://bit.ly/1txcnnO>`_, etc. but this works too.
 
 usage
 -----
@@ -74,7 +74,7 @@ Tests pass:
 
 so update ``__version__`` in:
 
-- ``pilo/__init__.py``
+- ``__init__.py``
 
 then commit and tag it:
 
