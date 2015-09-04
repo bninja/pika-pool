@@ -15,11 +15,14 @@ Pika connection pooling inspired by:
 
 Typically you'll go with local shovel(s), `krazee-eyez kombu <http://bit.ly/1txcnnO>`_, etc. but this works too.
 
+usage
+-----
+
 Get it:
 
 .. code:: bash
 
-   $ pip install pika-pool
+   pip install pika-pool
 
 and use it:
 
@@ -59,3 +62,26 @@ and use it:
                 delivery_mode=2,
             )
         )
+
+release
+-------
+
+Tests pass:
+
+.. code:: bash
+
+   py.test test.py --cov=pika_pool --cov-report term-missing
+
+so update ``__version__`` in:
+
+- ``pilo/__init__.py``
+
+then commit and tag it:
+
+.. code:: bash
+
+   git commit -am "release v{version}"
+   git tag -a v{version} -m "release v{version}"
+   git push --tags
+
+and `travis <https://travis-ci.org/bninja/pika-pool>`_ will publish it to `pypi <https://pypi.python.org/pypi/pika-pool/>`_.

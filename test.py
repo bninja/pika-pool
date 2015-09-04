@@ -71,7 +71,7 @@ class Message(dict):
 
     @classmethod
     def from_json(cls, raw):
-        return cls(json.loads(raw))
+        return cls(json.loads(raw.decode('utf-8')))
 
 
 class TestNullPool(object):
