@@ -307,7 +307,7 @@ class QueuedPool(Pool):
             except Overflow:
                 timeout = timeout or self.timeout
                 try:
-                    fairy = self._queue.get(timeout=self.timeout)
+                    fairy = self._queue.get(timeout=timeout)
                 except queue.Empty:
                     try:
                         fairy = self._create()
