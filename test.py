@@ -100,6 +100,15 @@ def queued_pool(params):
     )
 
 
+@pytest.fixture
+def empty_queued_pool(request, queued_pool):
+    queued = [queued_pool.acquire() for _ in range(queued_pool.max_size)]
+    request.addfinalizer(lambda: [cxn.release() for cxn in queued])
+    overflow = [queued_pool.acquire() for _ in range(queued_pool.max_overflow)]
+    request.addfinalizer(lambda: [cxn.release() for cxn in overflow])
+    return queued_pool
+
+
 def test_use_it():
     params = pika.URLParameters(
       'amqp://guest:guest@localhost:5672/?'
@@ -181,11 +190,17 @@ class TestQueuedPool(object):
                 cxn.release()
         assert fairy.cxn.is_closed
 
-    def test_timeout(self, request, queued_pool):
-        queued = [queued_pool.acquire() for _ in range(queued_pool.max_size)]
-        request.addfinalizer(lambda: [cxn.release() for cxn in queued])
-        overflow = [queued_pool.acquire() for _ in range(queued_pool.max_overflow)]
-        request.addfinalizer(lambda: [cxn.release() for cxn in overflow])
-        queued_pool.timeout = 1
+    def test_timeout(self, empty_queued_pool):
+        empty_queued_pool.timeout = 2
+        st = time.time()
         with pytest.raises(pika_pool.Timeout):
-            queued_pool.acquire()
+            empty_queued_pool.acquire()
+        elapsed = time.time() - st
+        assert elapsed < 2.5
+
+    def test_timeout_override(self, empty_queued_pool):
+        st = time.time()
+        with pytest.raises(pika_pool.Timeout):
+            empty_queued_pool.acquire(timeout=1)
+        elapsed = time.time() - st
+        assert elapsed < 1.5
