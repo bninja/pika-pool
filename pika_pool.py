@@ -67,17 +67,9 @@ import time
 import pika.exceptions
 
 
-__version__ = '0.1.2'
+__version__ = "0.1.3"
 
-__all__ = [
-    'Error'
-    'Timeout'
-    'Overflow'
-    'Connection',
-    'Pool',
-    'NullPool',
-    'QueuedPool',
-]
+__all__ = ["Error" "Timeout" "Overflow" "Connection", "Pool", "NullPool", "QueuedPool"]
 
 
 logger = logging.getLogger(__name__)
@@ -132,9 +124,7 @@ class Connection(object):
 
         :return: True if connection has been invalidted, otherwise False.
         """
-        return any(
-            isinstance(exc, error)for error in cls.connectivity_errors
-        )
+        return any(isinstance(exc, error) for error in cls.connectivity_errors)
 
     def __init__(self, pool, fairy):
         self.pool = pool
@@ -242,13 +232,25 @@ class Pool(object):
         def cxn_str(self):
             params = self.cxn_params
             if params:
-                return '{0}:{1}/{2}'.format(params.host, params.port, params.virtual_host)
+                return "{0}:{1}/{2}".format(
+                    params.host, params.port, params.virtual_host
+                )
 
         def __str__(self):
-            return ', '.join('{0}={1}'.format(k, v) for k, v in [
-                ('cxn', self.cxn_str),
-                ('channel', '{0}'.format(int(self.channel) if self.channel is not None else self.channel)),
-            ])
+            return ", ".join(
+                "{0}={1}".format(k, v)
+                for k, v in [
+                    ("cxn", self.cxn_str),
+                    (
+                        "channel",
+                        "{0}".format(
+                            int(self.channel)
+                            if self.channel is not None
+                            else self.channel
+                        ),
+                    ),
+                ]
+            )
 
     def _create(self):
         """
@@ -274,14 +276,9 @@ class QueuedPool(Pool):
     Queue backed pool.
     """
 
-    def __init__(self,
-                 create,
-                 max_size=10,
-                 max_overflow=10,
-                 timeout=30,
-                 recycle=None,
-                 stale=None,
-        ):
+    def __init__(
+        self, create, max_size=10, max_overflow=10, timeout=30, recycle=None, stale=None
+    ):
         """
         :param max_size:
             Maximum number of connections to keep queued.
@@ -327,11 +324,11 @@ class QueuedPool(Pool):
                     except Overflow:
                         raise Timeout()
         if self.is_expired(fairy):
-            logger.info('closing expired connection - %s', fairy)
+            logger.info("closing expired connection - %s", fairy)
             self.close(fairy)
             return self.acquire(timeout=timeout)
         if self.is_stale(fairy):
-            logger.info('closing stale connection - %s', fairy)
+            logger.info("closing stale connection - %s", fairy)
             self.close(fairy)
             return self.acquire(timeout=timeout)
         return self.Connection(self, fairy)
@@ -364,18 +361,37 @@ class QueuedPool(Pool):
             raise
 
     class Fairy(Pool.Fairy):
-
         def __init__(self, cxn):
             super(QueuedPool.Fairy, self).__init__(cxn)
             self.released_at = self.created_at = time.time()
 
         def __str__(self):
-            return ', '.join('{0}={1}'.format(k, v) for k, v in [
-                ('cxn', self.cxn_str),
-                ('channel', '{0}'.format(int(self.channel) if self.channel is not None else self.channel)),
-                ('created_at', '{0}'.format(datetime.fromtimestamp(self.created_at).isoformat())),
-                ('released_at', '{0}'.format(datetime.fromtimestamp(self.released_at).isoformat())),
-            ])
+            return ", ".join(
+                "{0}={1}".format(k, v)
+                for k, v in [
+                    ("cxn", self.cxn_str),
+                    (
+                        "channel",
+                        "{0}".format(
+                            int(self.channel)
+                            if self.channel is not None
+                            else self.channel
+                        ),
+                    ),
+                    (
+                        "created_at",
+                        "{0}".format(
+                            datetime.fromtimestamp(self.created_at).isoformat()
+                        ),
+                    ),
+                    (
+                        "released_at",
+                        "{0}".format(
+                            datetime.fromtimestamp(self.released_at).isoformat()
+                        ),
+                    ),
+                ]
+            )
 
     def is_stale(self, fairy):
         if not self.stale:
