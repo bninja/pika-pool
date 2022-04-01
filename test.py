@@ -139,6 +139,7 @@ def test_use_it():
                 delivery_mode=2,
             )
         )
+        assert 'cxn=localhost:5672//' in str(cxn.fairy)
 
 
 class TestQueuedPool(object):
